@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EQPlayer.h"
 
 @interface ViewController : UIViewController
+{
+    EQPlayer *player;
 
+}
 @end

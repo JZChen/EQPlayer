@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB92A6D51868BF8A001BEAF5 /* 30sec.au in Resources */ = {isa = PBXBuildFile; fileRef = BB92A6D41868BF8A001BEAF5 /* 30sec.au */; };
 		BBF23DAA18681714003E65CB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DA918681714003E65CB /* UIKit.framework */; };
 		BBF23DAC18681714003E65CB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DAB18681714003E65CB /* Foundation.framework */; };
 		BBF23DAE18681714003E65CB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DAD18681714003E65CB /* CoreGraphics.framework */; };
@@ -19,9 +20,16 @@
 		BBF23DC318681714003E65CB /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBF23DC118681714003E65CB /* MainStoryboard_iPhone.storyboard */; };
 		BBF23DC618681714003E65CB /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBF23DC418681714003E65CB /* MainStoryboard_iPad.storyboard */; };
 		BBF23DC918681714003E65CB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BBF23DC818681714003E65CB /* ViewController.m */; };
+		BBF23DD018681726003E65CB /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DCF18681726003E65CB /* CoreAudio.framework */; };
+		BBF23DD21868172C003E65CB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DD11868172C003E65CB /* AVFoundation.framework */; };
+		BBF23DD418681733003E65CB /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DD318681733003E65CB /* Accelerate.framework */; };
+		BBF23DD718681754003E65CB /* EQPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BBF23DD618681754003E65CB /* EQPlayer.m */; };
+		BBF23DD91868298F003E65CB /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DD81868298F003E65CB /* AudioToolbox.framework */; };
+		BBF23DDB18682BD5003E65CB /* sol.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BBF23DDA18682BD5003E65CB /* sol.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BB92A6D41868BF8A001BEAF5 /* 30sec.au */ = {isa = PBXFileReference; lastKnownFileType = audio.au; path = 30sec.au; sourceTree = "<group>"; };
 		BBF23DA618681714003E65CB /* EQPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EQPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBF23DA918681714003E65CB /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BBF23DAB18681714003E65CB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -39,6 +47,13 @@
 		BBF23DC518681714003E65CB /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		BBF23DC718681714003E65CB /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		BBF23DC818681714003E65CB /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		BBF23DCF18681726003E65CB /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		BBF23DD11868172C003E65CB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		BBF23DD318681733003E65CB /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		BBF23DD518681754003E65CB /* EQPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EQPlayer.h; sourceTree = "<group>"; };
+		BBF23DD618681754003E65CB /* EQPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EQPlayer.m; sourceTree = "<group>"; };
+		BBF23DD81868298F003E65CB /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		BBF23DDA18682BD5003E65CB /* sol.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sol.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +61,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBF23DD91868298F003E65CB /* AudioToolbox.framework in Frameworks */,
+				BBF23DD418681733003E65CB /* Accelerate.framework in Frameworks */,
+				BBF23DD21868172C003E65CB /* AVFoundation.framework in Frameworks */,
+				BBF23DD018681726003E65CB /* CoreAudio.framework in Frameworks */,
 				BBF23DAA18681714003E65CB /* UIKit.framework in Frameworks */,
 				BBF23DAC18681714003E65CB /* Foundation.framework in Frameworks */,
 				BBF23DAE18681714003E65CB /* CoreGraphics.framework in Frameworks */,
@@ -75,6 +94,10 @@
 		BBF23DA818681714003E65CB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BBF23DD81868298F003E65CB /* AudioToolbox.framework */,
+				BBF23DD318681733003E65CB /* Accelerate.framework */,
+				BBF23DD11868172C003E65CB /* AVFoundation.framework */,
+				BBF23DCF18681726003E65CB /* CoreAudio.framework */,
 				BBF23DA918681714003E65CB /* UIKit.framework */,
 				BBF23DAB18681714003E65CB /* Foundation.framework */,
 				BBF23DAD18681714003E65CB /* CoreGraphics.framework */,
@@ -91,6 +114,8 @@
 				BBF23DC418681714003E65CB /* MainStoryboard_iPad.storyboard */,
 				BBF23DC718681714003E65CB /* ViewController.h */,
 				BBF23DC818681714003E65CB /* ViewController.m */,
+				BBF23DD518681754003E65CB /* EQPlayer.h */,
+				BBF23DD618681754003E65CB /* EQPlayer.m */,
 				BBF23DB018681714003E65CB /* Supporting Files */,
 			);
 			path = EQPlayer;
@@ -99,6 +124,8 @@
 		BBF23DB018681714003E65CB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				BBF23DDA18682BD5003E65CB /* sol.mp3 */,
+				BB92A6D41868BF8A001BEAF5 /* 30sec.au */,
 				BBF23DB118681714003E65CB /* EQPlayer-Info.plist */,
 				BBF23DB218681714003E65CB /* InfoPlist.strings */,
 				BBF23DB518681714003E65CB /* main.m */,
@@ -167,6 +194,8 @@
 				BBF23DC018681714003E65CB /* Default-568h@2x.png in Resources */,
 				BBF23DC318681714003E65CB /* MainStoryboard_iPhone.storyboard in Resources */,
 				BBF23DC618681714003E65CB /* MainStoryboard_iPad.storyboard in Resources */,
+				BBF23DDB18682BD5003E65CB /* sol.mp3 in Resources */,
+				BB92A6D51868BF8A001BEAF5 /* 30sec.au in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,6 +209,7 @@
 				BBF23DB618681714003E65CB /* main.m in Sources */,
 				BBF23DBA18681714003E65CB /* AppDelegate.m in Sources */,
 				BBF23DC918681714003E65CB /* ViewController.m in Sources */,
+				BBF23DD718681754003E65CB /* EQPlayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,6 +342,7 @@
 				BBF23DCE18681714003E65CB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

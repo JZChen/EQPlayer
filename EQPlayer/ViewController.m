@@ -18,6 +18,14 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    //
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    [self becomeFirstResponder];
+    
+    player = [[EQPlayer alloc] init];
+    [player startAUGraph];
+    
 }
 
 - (void)didReceiveMemoryWarning
