@@ -54,7 +54,7 @@ enum {
     AUGraph                         processingGraph;            // the main audio graph
     BOOL                            playing;                    // indicates audiograph is running
     BOOL                            interruptedDuringPlayback;  // indicates interruption happened while audiograph running
-    
+    BOOL                            loading;                    // indicates the file is loading into memory
     
     // some of the audio units in this app
     AudioUnit                       ioUnit;                  // remote io unit
@@ -97,11 +97,13 @@ enum {
 @property (assign) int displayNumberOfInputChannels;
 @property (getter = isPlaying)  BOOL                        playing;
 @property                       BOOL                        interruptedDuringPlayback;
+@property (readonly,nonatomic,getter = isLoading)  BOOL     loading;
 @property (readonly,nonatomic, getter = getSongInfo )  NSArray *songInfo;
 @property (readwrite,nonatomic, setter = setMediaItem: ) MPMediaItem *mediaItem;
 
 @property (readwrite) AudioStreamBasicDescription stereoStreamFormat;
 @property (readwrite) AudioStreamBasicDescription auEffectStreamFormat;
+@property (readonly,nonatomic) soundStruct *audioStruct;
 
 
 

@@ -10,10 +10,10 @@
 
 @implementation EQPlayer
 
-@synthesize graphSampleRate , displayNumberOfInputChannels , auEffectStreamFormat , interruptedDuringPlayback , playing ,stereoStreamFormat;
+@synthesize graphSampleRate , displayNumberOfInputChannels , auEffectStreamFormat , interruptedDuringPlayback , playing ,stereoStreamFormat , loading = _loading;
 
 
-@synthesize songInfo = _songInfo , mediaItem = _mediaItem;
+@synthesize songInfo = _songInfo , mediaItem = _mediaItem , audioStruct = _audioStruct ;
 
 static OSStatus inputRenderCallback (void *inRefCon, AudioUnitRenderActionFlags  *ioActionFlags, const AudioTimeStamp *inTimeStamp,  UInt32  inBusNumber,   UInt32  inNumberFrames,  AudioBufferList *ioData );
 
@@ -59,16 +59,20 @@ static OSStatus inputRenderCallback (
                                      //        AudioBufferList.
                                      ) {
     
-    
-    
-    soundStructPtr    soundStructPointerArray   = (soundStructPtr) inRefCon;
+    EQPlayer *player = (__bridge EQPlayer*) inRefCon;
+    soundStructPtr    soundStructPointerArray   = player.audioStruct;
     UInt64            frameTotalForSound        = soundStructPointerArray->frameCount;
     BOOL              isStereo                  = soundStructPointerArray->isStereo;
     
+
+    // check if the file is loading into memory.
+    if (player.isLoading) return noErr;
+                                         
     // Declare variables to point to the audio buffers. Their data type must match the buffer data type.
     AudioUnitSampleType *dataInLeft;
     AudioUnitSampleType *dataInRight;
     
+
     
     dataInLeft                 = soundStructPointerArray->audioDataLeft;
     if (isStereo) dataInRight  = soundStructPointerArray->audioDataRight;
@@ -85,14 +89,16 @@ static OSStatus inputRenderCallback (
     // Get the sample number, as an index into the sound stored in memory,
     //    to start reading data from.
     UInt32 sampleNumber = soundStructPointerArray->sampleNumber;
-    //printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
+    printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
 
    
     if (sampleNumber == 0 ) {
         sampleNumber = frameTotalForSound / 4 * 3;
         //printf("go back to frame 0\n");
     }
-    
+                                         
+
+
     // Fill the buffer or buffers pointed at by *ioData with the requested number of samples
     //    of audio from the sound stored in memory.
     for (UInt32 frameNumber = 0 ; frameNumber < inNumberFrames ; ++frameNumber , sampleNumber++) {
@@ -138,6 +144,7 @@ static OSStatus inputRenderCallback (
     if (!self) return nil;
     
     self.interruptedDuringPlayback = NO;
+    loading = false;
     [self setupAudioSession];
     
     //[self obtainSoundFileURLs];
@@ -268,11 +275,18 @@ static OSStatus inputRenderCallback (
 	// this is for the two file players
 	// subtract 2 from bus count because we're not including mic & synth bus for now...  tz
     for (UInt16 busNumber = 0; busNumber < fileCount; ++busNumber) {
-        
+        /*
         // Setup the structure that contains the input render callback
         AURenderCallbackStruct inputCallbackStruct;
         inputCallbackStruct.inputProc        = &inputRenderCallback;
         inputCallbackStruct.inputProcRefCon  = _soundStruct;
+        */
+        
+        // Setup the structure that contains the input render callback
+        AURenderCallbackStruct inputCallbackStruct;
+        inputCallbackStruct.inputProc        = &inputRenderCallback;
+        inputCallbackStruct.inputProcRefCon  = (__bridge void *)(self);
+
         
         NSLog (@"Registering the render callback with mixer unit input bus %u", busNumber);
         // Set a callback for the specified node's specified input
@@ -951,6 +965,7 @@ static OSStatus inputRenderCallback (
     
     // Assign the frame count to the soundStructArray instance variable
     _soundStruct =  malloc(sizeof(soundStruct));
+    _audioStruct = _soundStruct;
     _soundStruct->frameCount = totalFramesInFile;
         
     // Get the audio file's number of channels.
@@ -1085,7 +1100,8 @@ static OSStatus inputRenderCallback (
         // Set the sample index to zero, so that playback starts at the 
         //    beginning of the sound.
         _soundStruct->sampleNumber = 0;
-        
+        _loading = false;
+    
         // Dispose of the extended audio file object, which also
         //    closes the associated file.
         ExtAudioFileDispose (audioFileObject);
@@ -1165,6 +1181,7 @@ static OSStatus inputRenderCallback (
     
     [exporter exportAsynchronouslyWithCompletionHandler:^{
         NSLog(@"%@",exportFile);
+        _loading = true;
         [self readAudioFilesIntoMemory];
         [self startAUGraph];
     }];

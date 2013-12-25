@@ -6,15 +6,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EQPlayer/EQPlayer.m"
-            timestampString = "409676254.457544"
+            timestampString = "409678726.928111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "905"
-            endingLineNumber = "905"
+            startingLineNumber = "919"
+            endingLineNumber = "919"
             landmarkName = "-readAudioFilesIntoMemory"
             landmarkType = "5">
          </BreakpointContent>
