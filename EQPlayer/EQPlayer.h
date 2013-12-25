@@ -30,6 +30,9 @@ typedef struct {
 
 @interface EQPlayer : NSObject
 {
+
+    AVAudioSession *mySession;
+    
     Float64 graphSampleRate;                                // audio graph sample rate
     int displayNumberOfInputChannels;                       // number of input channels detected on startup
     AudioStreamBasicDescription     stereoStreamFormat;     // standard stereo 8.24 fixed point

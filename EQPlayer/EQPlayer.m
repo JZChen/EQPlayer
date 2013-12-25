@@ -83,20 +83,23 @@ static OSStatus inputRenderCallback (
     // Get the sample number, as an index into the sound stored in memory,
     //    to start reading data from.
     UInt32 sampleNumber = soundStructPointerArray->sampleNumber;
-    printf("sampleNumber %i frameTotal %i\n",sampleNumber,frameTotalForSound);
+    printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
+
+   
+    if (sampleNumber == 0 ) {
+        sampleNumber = frameTotalForSound / 4 * 3;
+        //printf("go back to frame 0\n");
+    }
     
     // Fill the buffer or buffers pointed at by *ioData with the requested number of samples
     //    of audio from the sound stored in memory.
-    for (UInt32 frameNumber = 0 ; frameNumber < inNumberFrames; ++frameNumber , sampleNumber++) {
+    for (UInt32 frameNumber = 0 ; frameNumber < inNumberFrames ; ++frameNumber , sampleNumber++) {
+        
+        
         
         outSamplesChannelLeft[frameNumber]                 = dataInLeft[sampleNumber];
         if (isStereo) outSamplesChannelRight[frameNumber]  = dataInRight[sampleNumber];
         
-        //sampleNumber++;
-        
-        if (sampleNumber < 100000) {
-          //  sampleNumber = 4042368;
-        }
         
         
         // After reaching the end of the sound stored in memory--that is, after
@@ -131,8 +134,6 @@ static OSStatus inputRenderCallback (
     if (!self) return nil;
     
     self.interruptedDuringPlayback = NO;
-    
-    
     [self setupAudioSession];
     
     //[self obtainSoundFileURLs];
@@ -158,7 +159,7 @@ static OSStatus inputRenderCallback (
     NSLog (@"Configuring and then initializing audio processing graph");
     OSStatus result = noErr;
     
-    UInt16 busNumber;           // mixer input bus number (starts with 0)
+//    UInt16 busNumber;           // mixer input bus number (starts with 0)
     
     // instantiate and setup audio processing graph by setting component descriptions and adding nodes
     
@@ -224,9 +225,7 @@ static OSStatus inputRenderCallback (
     
     UInt32 busCount   = 6;    // bus count for mixer unit input
     UInt32 guitarBus  = 0;    // mixer unit bus 0 will be stereo and will take the guitar sound
-    UInt32 beatsBus   = 1;    // mixer unit bus 1 will be mono and will take the beats sound
 	UInt32 micBus	  = 2;    // mixer unit bus 2 will be mono and will take the microphone input
-	UInt32 synthBus   = 3;    // mixer unit bus 2 will be mono and will take the microphone input
     //    UInt32 samplerBus   = 4;
     //    UInt32 filePlayerBus = 5;
     
@@ -595,7 +594,7 @@ static OSStatus inputRenderCallback (
     //////////////////////////
     // setup the session
 	
-    AVAudioSession *mySession = [AVAudioSession sharedInstance];
+    mySession = [AVAudioSession sharedInstance];
     
     // Specify that this object is the delegate of the audio session, so that
     //    this object's endInterruption method will be invoked when needed.
@@ -623,7 +622,8 @@ static OSStatus inputRenderCallback (
     
     // Request the desired hardware sample rate.
     self.graphSampleRate = 44100.0;    // Hertz
-    
+    //self.graphSampleRate = 22050.0;    // Hertz
+
     // deprecated in ios 6.0
     // [mySession setPreferredHardwareSampleRate: graphSampleRate
     //                                    error: &audioSessionError];
@@ -642,7 +642,8 @@ static OSStatus inputRenderCallback (
 	//  try ((buffer size + 1) / sample rate) - due to little arm6 floating point bug?
 	// doesn't seem to help - the duration seems to get set to whatever the system wants...
 	
-	Float32 currentBufferDuration =  (Float32) (1024.0 / self.graphSampleRate);
+//	Float32 currentBufferDuration =  (Float32) (1024.0 / self.graphSampleRate);
+    Float32 currentBufferDuration =  (Float32) (1024.0 / self.graphSampleRate);
 	UInt32 sss = sizeof(currentBufferDuration);
 	
 	AudioSessionSetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration, sizeof(currentBufferDuration), &currentBufferDuration);
@@ -725,8 +726,8 @@ static OSStatus inputRenderCallback (
     stereoStreamFormat.mSampleRate        = graphSampleRate;
     
     
-    //NSLog (@"The stereo stream format:");
-    //[self printASBD: stereoStreamFormat];
+    NSLog (@"The stereo stream format:");
+    [self printASBD: stereoStreamFormat];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -907,7 +908,7 @@ static OSStatus inputRenderCallback (
         
     if (noErr != result || NULL == audioFileObject) {[self printErrorMessage: @"ExtAudioFileOpenURL" withStatus: result]; return;}
     
-    /*
+    
     SInt64 framesInThisFile;
     UInt32 propertySize = sizeof(framesInThisFile);
     ExtAudioFileGetProperty(audioFileObject, kExtAudioFileProperty_FileLengthFrames, &propertySize, &framesInThisFile);
@@ -917,7 +918,7 @@ static OSStatus inputRenderCallback (
     ExtAudioFileGetProperty(audioFileObject, kExtAudioFileProperty_FileDataFormat, &propertySize, &fileStreamFormat);
     
     NSLog(@"Duration %f, total frame %d",(float)framesInThisFile/(float)fileStreamFormat.mSampleRate,framesInThisFile);
-    */
+    NSLog(@"SampleRate %f",(float)fileStreamFormat.mSampleRate);
     
     
     // Get the audio file's length in frames.
@@ -949,10 +950,11 @@ static OSStatus inputRenderCallback (
                                          &formatPropertySize,
                                          &fileAudioFormat
                                         );
-        
+    
     if (noErr != result) {[self printErrorMessage: @"ExtAudioFileGetProperty (file audio format)" withStatus: result]; return;}
         
     UInt32 channelCount = fileAudioFormat.mChannelsPerFrame;
+    
         
     // Allocate memory in the soundStructArray instance variable to hold the left channel,
     //    or mono, audio data
@@ -1078,6 +1080,7 @@ static OSStatus inputRenderCallback (
 }
 
 
+
 #pragma mark -
 #pragma mark Playback control
 
@@ -1123,7 +1126,7 @@ static OSStatus inputRenderCallback (
     UInt32 formatID = CFSwapInt32HostToBig (asbd.mFormatID);
     bcopy (&formatID, formatIDString, 4);
     formatIDString[4] = '\0';
-    
+
     NSLog (@"  Sample Rate:         %10.0f",  asbd.mSampleRate);
     NSLog (@"  Format ID:           %10s",    formatIDString);
     NSLog (@"  Format Flags:        %10lu",    asbd.mFormatFlags);
