@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12F45" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="EQSet" syncable="YES">
+        <attribute name="eqset" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="songid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="songname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="songtype" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="EQSet" positionX="160" positionY="192" width="128" height="105"/>
+    </elements>
+</model>

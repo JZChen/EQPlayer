@@ -13,6 +13,8 @@
 @synthesize graphSampleRate , displayNumberOfInputChannels , auEffectStreamFormat , interruptedDuringPlayback , playing ,stereoStreamFormat;
 
 
+@synthesize songInfo = _songInfo , mediaItem = _mediaItem;
+
 static OSStatus inputRenderCallback (void *inRefCon, AudioUnitRenderActionFlags  *ioActionFlags, const AudioTimeStamp *inTimeStamp,  UInt32  inBusNumber,   UInt32  inNumberFrames,  AudioBufferList *ioData );
 
 #pragma mark Mixer input bus 0 & 1 render callback (loops buffers)
@@ -83,7 +85,7 @@ static OSStatus inputRenderCallback (
     // Get the sample number, as an index into the sound stored in memory,
     //    to start reading data from.
     UInt32 sampleNumber = soundStructPointerArray->sampleNumber;
-    printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
+    //printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
 
    
     if (sampleNumber == 0 ) {
@@ -100,6 +102,8 @@ static OSStatus inputRenderCallback (
         outSamplesChannelLeft[frameNumber]                 = dataInLeft[sampleNumber];
         if (isStereo) outSamplesChannelRight[frameNumber]  = dataInRight[sampleNumber];
         
+        //outSamplesChannelLeft[frameNumber]                 = 0;
+        //if (isStereo) outSamplesChannelRight[frameNumber]  = 0;
         
         
         // After reaching the end of the sound stored in memory--that is, after
@@ -520,13 +524,11 @@ static OSStatus inputRenderCallback (
     
 
     // Frequency bands
-    NSArray *eqFrequencies = @[ @32, @250, @500, @1000, @2000, @16000 ];
-    
-    // By default the equalizer isn't enabled! You need to set bypass
-    // to zero so the equalizer actually does something
-    NSArray *eqBypass = @[@0, @0, @0, @0, @0, @0];
-    
+    NSArray *frequency = @[ @32.0f , @64.0f, @125.0f, @250.0f, @500.0f, @1000.0f, @2000.0f, @4000.0f, @8000.0f, @16000.0f ];
+    eqFrequencies = [[NSMutableArray alloc] initWithArray:frequency];
     UInt32 noBands = [eqFrequencies count];
+    
+    
     // Set the number of bands first
     result = AudioUnitSetProperty(auEffectUnit,
                                   kAUNBandEQProperty_NumberOfBands,
@@ -549,13 +551,16 @@ static OSStatus inputRenderCallback (
         if (noErr != result) {[self printErrorMessage: @"set NumberOfBands Property" withStatus: result]; return;}
         
     }
+    
+    // By default the equalizer isn't enabled! You need to set bypass
+    // to zero so the equalizer actually does something
     // Set the bypass
     for (NSUInteger i=0; i<noBands; i++) {
         result = AudioUnitSetParameter(auEffectUnit,
                                        kAUNBandEQParam_BypassBand+i,
                                        kAudioUnitScope_Global,
                                        0,
-                                       (AudioUnitParameterValue)[[eqBypass objectAtIndex:i] intValue],
+                                       (AudioUnitParameterValue)0,
                                        0);
         if (noErr != result) {[self printErrorMessage: @"set NumberOfBands Property" withStatus: result]; return;}
     }
@@ -893,7 +898,15 @@ static OSStatus inputRenderCallback (
 - (void) readAudioFilesIntoMemory {
     
     //NSURL *mp3file   = [[NSBundle mainBundle] URLForResource: @"30sec" withExtension: @"au"];
+
     NSURL *mp3file   = [[NSBundle mainBundle] URLForResource: @"sol" withExtension: @"mp3"];
+    
+    if ( audioFile != nil ) {
+        mp3file = audioFile;
+    }else{
+        NSLog(@"First reading file into memory");
+    }
+    
     CFURLRef sourceURL = (__bridge CFURLRef)mp3file;
     
     
@@ -1115,17 +1128,139 @@ static OSStatus inputRenderCallback (
     }
 }
 
+#pragma PUBLIC_METHOD
+
+// public method
+
+- (void)setMediaItem:(MPMediaItem *)mediaItem
+{
+    // assing url
+    _mediaItem = mediaItem;
+
+    NSURL *mediaItemAssetURL = [mediaItem valueForProperty:MPMediaItemPropertyAssetURL];
+
+    
+    
+    NSString *tempPath = NSTemporaryDirectory();
+    
+    AVURLAsset *songAsset = [AVURLAsset URLAssetWithURL:mediaItemAssetURL options:nil];
+    
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset: songAsset presetName: AVAssetExportPresetPassthrough];
+    exporter.outputFileType = @"com.apple.coreaudio-format";
+    
+    
+    
+    NSString *fname = [[NSString stringWithFormat:@"file"] stringByAppendingString:@".caf"];
+    NSString *exportFile = [tempPath stringByAppendingPathComponent:fname];
+    
+    // update the audiofile Path
+    audioFile = [NSURL fileURLWithPath:exportFile];
+    exporter.outputURL = audioFile;
+
+    // remove files in tmp directory
+    NSArray* tmpDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:NSTemporaryDirectory() error:NULL];
+    for (NSString *file in tmpDirectory) {
+        [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), file] error:NULL];
+    }
+    
+    [exporter exportAsynchronouslyWithCompletionHandler:^{
+        NSLog(@"%@",exportFile);
+        [self readAudioFilesIntoMemory];
+        [self startAUGraph];
+    }];
+     
+    
+    //    NSLog(@"%@",[[[NSBundle mainBundle] URLForResource:@"exported" withExtension:@"caf"] absoluteString]);
+    //    fileReader.audioFileURL = [[NSBundle mainBundle] URLForResource:@"exported" withExtension:@"caf"];
+
+
+}
+
+- (NSArray *)getSongInfo
+{
+    NSLog(@"under construction");
+    exit(1);
+}
+
+- (void)setTime:(float)songTime
+{
+
+}
+
+- (void)setEQ:(int)frequencyTag gain:(float)gainValue
+{
+
+    // To set a parameter for a band you need to add the band number to the revelant enum for that parameter
+    AudioUnitParameterID parameterID = kAUNBandEQParam_Gain + frequencyTag;
+    OSStatus result = AudioUnitSetParameter(auEffectUnit,
+                                            parameterID,
+                                            kAudioUnitScope_Global,
+                                            0,
+                                            gainValue,
+                                            0);
+    
+    if (noErr != result) {[self printErrorMessage: @"setEQ" withStatus: result]; return;}
+}
+
+- (NSArray *)getFrequencyBand
+{
+    return [NSArray arrayWithArray:eqFrequencies];
+}
+
+- (float)getCurrentTime
+{
+    return songTime;
+}
+- (float)getDuration
+{
+    
+    NSLog(@"getting audio duration");
+    NSURL *mp3file   = [[NSBundle mainBundle] URLForResource: @"sol" withExtension: @"mp3"];
+    CFURLRef sourceURL = (__bridge CFURLRef)mp3file;
+
+    
+    // Instantiate an extended audio file object.
+    ExtAudioFileRef audioFileObject = 0;
+    
+    // Open an audio file and associate it with the extended audio file object.
+    OSStatus result = ExtAudioFileOpenURL (sourceURL, &audioFileObject);
+    
+    if (noErr != result || NULL == audioFileObject) {[self printErrorMessage: @"ExtAudioFileOpenURL" withStatus: result]; return 0;}
+    
+    // get total frame from the input audio
+    SInt64 framesInThisFile;
+    UInt32 propertySize = sizeof(framesInThisFile);
+    ExtAudioFileGetProperty(audioFileObject, kExtAudioFileProperty_FileLengthFrames, &propertySize, &framesInThisFile);
+    
+    // get audio format
+    AudioStreamBasicDescription fileStreamFormat;
+    propertySize = sizeof(AudioStreamBasicDescription);
+    ExtAudioFileGetProperty(audioFileObject, kExtAudioFileProperty_FileDataFormat, &propertySize, &fileStreamFormat);
+    
+    return (float)framesInThisFile/(float)fileStreamFormat.mSampleRate;
+
+}
+
+
 
 #pragma DEBUGTOOL
+
+
+#define DEBUG_MSG 1
+// 1 for print , other for disable
 
 // You can use this method during development and debugging to look at the
 //    fields of an AudioStreamBasicDescription struct.
 - (void) printASBD: (AudioStreamBasicDescription) asbd {
+    if ( DEBUG_MSG != 1) {
+        return;
+    }
     
     char formatIDString[5];
     UInt32 formatID = CFSwapInt32HostToBig (asbd.mFormatID);
     bcopy (&formatID, formatIDString, 4);
     formatIDString[4] = '\0';
+
 
     NSLog (@"  Sample Rate:         %10.0f",  asbd.mSampleRate);
     NSLog (@"  Format ID:           %10s",    formatIDString);
@@ -1138,7 +1273,9 @@ static OSStatus inputRenderCallback (
 }
 
 - (void) printErrorMessage: (NSString *) errorString withStatus: (OSStatus) result {
-    
+    if ( DEBUG_MSG != 1) {
+        return;
+    }
     
     char str[20];
 	// see if it appears to be a 4-char-code

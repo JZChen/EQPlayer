@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B5884A7B186AD27B0019F090 /* EQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5884A79186AD27B0019F090 /* EQViewController.m */; };
+		B5884A7C186AD27B0019F090 /* EQViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5884A7A186AD27B0019F090 /* EQViewController.xib */; };
+		B5884A7F186AEC970019F090 /* EQDB.m in Sources */ = {isa = PBXBuildFile; fileRef = B5884A7E186AEC970019F090 /* EQDB.m */; };
+		B5884A85186AECC00019F090 /* EQSet.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = B5884A84186AECC00019F090 /* EQSet.xcdatamodel */; };
+		B5884A87186AEE8C0019F090 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5884A86186AEE8C0019F090 /* CoreData.framework */; };
+		B5884A89186B11930019F090 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5884A88186B11930019F090 /* MediaPlayer.framework */; };
 		BB92A6D51868BF8A001BEAF5 /* 30sec.au in Resources */ = {isa = PBXBuildFile; fileRef = BB92A6D41868BF8A001BEAF5 /* 30sec.au */; };
 		BBF23DAA18681714003E65CB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DA918681714003E65CB /* UIKit.framework */; };
 		BBF23DAC18681714003E65CB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF23DAB18681714003E65CB /* Foundation.framework */; };
@@ -29,6 +35,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B5884A78186AD27B0019F090 /* EQViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EQViewController.h; path = ../EQViewController.h; sourceTree = "<group>"; };
+		B5884A79186AD27B0019F090 /* EQViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EQViewController.m; path = ../EQViewController.m; sourceTree = "<group>"; };
+		B5884A7A186AD27B0019F090 /* EQViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = EQViewController.xib; path = ../EQViewController.xib; sourceTree = "<group>"; };
+		B5884A7D186AEC970019F090 /* EQDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EQDB.h; sourceTree = "<group>"; };
+		B5884A7E186AEC970019F090 /* EQDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EQDB.m; sourceTree = "<group>"; };
+		B5884A84186AECC00019F090 /* EQSet.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EQSet.xcdatamodel; sourceTree = "<group>"; };
+		B5884A86186AEE8C0019F090 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		B5884A88186B11930019F090 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		BB92A6D41868BF8A001BEAF5 /* 30sec.au */ = {isa = PBXFileReference; lastKnownFileType = audio.au; path = 30sec.au; sourceTree = "<group>"; };
 		BBF23DA618681714003E65CB /* EQPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EQPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBF23DA918681714003E65CB /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -61,6 +75,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5884A89186B11930019F090 /* MediaPlayer.framework in Frameworks */,
+				B5884A87186AEE8C0019F090 /* CoreData.framework in Frameworks */,
 				BBF23DD91868298F003E65CB /* AudioToolbox.framework in Frameworks */,
 				BBF23DD418681733003E65CB /* Accelerate.framework in Frameworks */,
 				BBF23DD21868172C003E65CB /* AVFoundation.framework in Frameworks */,
@@ -94,6 +110,8 @@
 		BBF23DA818681714003E65CB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B5884A88186B11930019F090 /* MediaPlayer.framework */,
+				B5884A86186AEE8C0019F090 /* CoreData.framework */,
 				BBF23DD81868298F003E65CB /* AudioToolbox.framework */,
 				BBF23DD318681733003E65CB /* Accelerate.framework */,
 				BBF23DD11868172C003E65CB /* AVFoundation.framework */,
@@ -114,8 +132,13 @@
 				BBF23DC418681714003E65CB /* MainStoryboard_iPad.storyboard */,
 				BBF23DC718681714003E65CB /* ViewController.h */,
 				BBF23DC818681714003E65CB /* ViewController.m */,
+				B5884A78186AD27B0019F090 /* EQViewController.h */,
+				B5884A79186AD27B0019F090 /* EQViewController.m */,
+				B5884A7A186AD27B0019F090 /* EQViewController.xib */,
 				BBF23DD518681754003E65CB /* EQPlayer.h */,
 				BBF23DD618681754003E65CB /* EQPlayer.m */,
+				B5884A7D186AEC970019F090 /* EQDB.h */,
+				B5884A7E186AEC970019F090 /* EQDB.m */,
 				BBF23DB018681714003E65CB /* Supporting Files */,
 			);
 			path = EQPlayer;
@@ -124,6 +147,7 @@
 		BBF23DB018681714003E65CB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B5884A84186AECC00019F090 /* EQSet.xcdatamodel */,
 				BBF23DDA18682BD5003E65CB /* sol.mp3 */,
 				BB92A6D41868BF8A001BEAF5 /* 30sec.au */,
 				BBF23DB118681714003E65CB /* EQPlayer-Info.plist */,
@@ -190,6 +214,7 @@
 			files = (
 				BBF23DB418681714003E65CB /* InfoPlist.strings in Resources */,
 				BBF23DBC18681714003E65CB /* Default.png in Resources */,
+				B5884A7C186AD27B0019F090 /* EQViewController.xib in Resources */,
 				BBF23DBE18681714003E65CB /* Default@2x.png in Resources */,
 				BBF23DC018681714003E65CB /* Default-568h@2x.png in Resources */,
 				BBF23DC318681714003E65CB /* MainStoryboard_iPhone.storyboard in Resources */,
@@ -207,9 +232,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				BBF23DB618681714003E65CB /* main.m in Sources */,
+				B5884A7B186AD27B0019F090 /* EQViewController.m in Sources */,
 				BBF23DBA18681714003E65CB /* AppDelegate.m in Sources */,
+				B5884A85186AECC00019F090 /* EQSet.xcdatamodel in Sources */,
 				BBF23DC918681714003E65CB /* ViewController.m in Sources */,
 				BBF23DD718681754003E65CB /* EQPlayer.m in Sources */,
+				B5884A7F186AEC970019F090 /* EQDB.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +332,10 @@
 		BBF23DCD18681714003E65CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/allenhsu/EQPlayer,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "EQPlayer/EQPlayer-Prefix.pch";
 				INFOPLIST_FILE = "EQPlayer/EQPlayer-Info.plist";
@@ -315,6 +347,10 @@
 		BBF23DCE18681714003E65CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/allenhsu/EQPlayer,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "EQPlayer/EQPlayer-Prefix.pch";
 				INFOPLIST_FILE = "EQPlayer/EQPlayer-Info.plist";

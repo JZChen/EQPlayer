@@ -7,11 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MediaPlayer/MediaPlayer.h>
 #import "EQPlayer.h"
+#import "EQViewController.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<MPMediaPickerControllerDelegate>
 {
     EQPlayer *player;
 
 }
+
+- (IBAction)selectSong:(id)sender;
+
 @end

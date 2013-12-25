@@ -10,6 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 // Data structure for mono or stereo sound, to pass to the application's render callback function,
 //    which gets invoked by a Mixer unit input bus when it needs more audio to play.
@@ -25,21 +26,33 @@ typedef struct {
     
 } soundStruct, *soundStructPtr;
 
-
-
+enum {
+    SongTitle                          = 0,
+    SongDuration                       = 1,
+    SongSampleRate                     = 2,
+    SongID                             = 3,
+    SongUrl                            = 4
+};
 
 @interface EQPlayer : NSObject
 {
 
     AVAudioSession *mySession;
     
-    Float64 graphSampleRate;                                // audio graph sample rate
-    int displayNumberOfInputChannels;                       // number of input channels detected on startup
-    AudioStreamBasicDescription     stereoStreamFormat;     // standard stereo 8.24 fixed point
+    
+    // number of frequencys
+    NSMutableArray *eqFrequencies;                              // frequency bands for equalizer
+    NSURL *audioFile;                                           // audio file URL
+    float songTime;
+    
+    
+    Float64 graphSampleRate;                                    // audio graph sample rate
+    int displayNumberOfInputChannels;                           // number of input channels detected on startup
+    AudioStreamBasicDescription     stereoStreamFormat;         // standard stereo 8.24 fixed point
     AudioStreamBasicDescription     auEffectStreamFormat;		// audio unit Effect format
     
-    AUGraph                         processingGraph;        // the main audio graph
-    BOOL                            playing;                // indicates audiograph is running
+    AUGraph                         processingGraph;            // the main audio graph
+    BOOL                            playing;                    // indicates audiograph is running
     BOOL                            interruptedDuringPlayback;  // indicates interruption happened while audiograph running
     
     
@@ -71,14 +84,21 @@ typedef struct {
 - (void) startAUGraph;
 - (void) stopAUGraph;
 
+// public method
+- (void)setTime:(float)songTime;
+- (void)setEQ:(int)frequencyTag gain:(float)gainValue;
+- (NSArray *)getFrequencyBand;
+- (float)getCurrentTime;
+- (float)getDuration;
+
 
 
 @property (readwrite) Float64 graphSampleRate;
 @property (assign) int displayNumberOfInputChannels;
 @property (getter = isPlaying)  BOOL                        playing;
 @property                       BOOL                        interruptedDuringPlayback;
-
-
+@property (readonly,nonatomic, getter = getSongInfo )  NSArray *songInfo;
+@property (readwrite,nonatomic, setter = setMediaItem: ) MPMediaItem *mediaItem;
 
 @property (readwrite) AudioStreamBasicDescription stereoStreamFormat;
 @property (readwrite) AudioStreamBasicDescription auEffectStreamFormat;
