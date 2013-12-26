@@ -8,10 +8,11 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="EQViewController">
             <connections>
                 <outlet property="eqbars" destination="Jmg-nZ-qoA" id="3Sl-Am-sgp"/>
-                <outlet property="info" destination="zVU-al-g1t" id="rI5-qV-n8r"/>
+                <outlet property="info" destination="kdL-Hj-KC3" id="asy-Y9-Vhh"/>
                 <outlet property="songName" destination="bdS-Gs-GTu" id="CuG-QL-sxZ"/>
                 <outlet property="songProgress" destination="Fx0-mA-Nhg" id="Suu-gY-LrF"/>
                 <outlet property="songTime" destination="HTs-kS-yIL" id="PBj-3v-8Co"/>
+                <outlet property="songType" destination="Elg-LV-9R6" id="m8V-ny-NKj"/>
                 <outlet property="view" destination="1" id="3"/>
             </connections>
         </placeholder>
@@ -34,17 +35,28 @@
                                 <action selector="reset:" destination="-1" id="zkv-4R-bmE"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Restore" id="c4e-xY-54j"/>
-                        <barButtonItem title="Save" id="CPB-Ld-fG0"/>
+                        <barButtonItem title="Restore" id="c4e-xY-54j">
+                            <connections>
+                                <action selector="restore:" destination="-1" id="p4s-xd-WXu"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem title="Save" id="CPB-Ld-fG0">
+                            <connections>
+                                <action selector="save:" destination="-1" id="j2u-Ja-9lF"/>
+                            </connections>
+                        </barButtonItem>
                     </items>
                 </toolbar>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jmg-nZ-qoA">
-                    <rect key="frame" x="0.0" y="245" width="320" height="323"/>
+                    <rect key="frame" x="0.0" y="302" width="320" height="266"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </scrollView>
                 <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Fx0-mA-Nhg">
                     <rect key="frame" x="-2" y="86" width="324" height="23"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <connections>
+                        <action selector="setTime:" destination="-1" eventType="valueChanged" id="Hvq-QF-32L"/>
+                    </connections>
                 </slider>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Name" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="105" translatesAutoresizingMaskIntoConstraints="NO" id="bdS-Gs-GTu">
                     <rect key="frame" x="20" y="50" width="105" height="34"/>
@@ -53,16 +65,35 @@
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HTs-kS-yIL">
-                    <rect key="frame" x="262" y="56" width="38" height="21"/>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time" textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HTs-kS-yIL">
+                    <rect key="frame" x="197" y="56" width="66" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zVU-al-g1t">
-                    <rect key="frame" x="0.0" y="119" width="320" height="128"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                </scrollView>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Type" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="18f-hH-BkS">
+                    <rect key="frame" x="20" y="132" width="69" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter type here" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Elg-LV-9R6">
+                    <rect key="frame" x="92" y="129" width="208" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="0nx-fj-dx8"/>
+                    </connections>
+                </textField>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kdL-Hj-KC3">
+                    <rect key="frame" x="0.0" y="167" width="320" height="133"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>

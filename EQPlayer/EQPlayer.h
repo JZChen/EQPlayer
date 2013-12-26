@@ -12,6 +12,13 @@
 #import <Accelerate/Accelerate.h>
 #import <MediaPlayer/MediaPlayer.h>
 
+
+@protocol EQPlayerDelegate <NSObject>
+
+- (void)updateCurrentTime:(float)time;
+
+@end
+
 // Data structure for mono or stereo sound, to pass to the application's render callback function,
 //    which gets invoked by a Mixer unit input bus when it needs more audio to play.
 //
@@ -34,6 +41,8 @@ enum {
     SongUrl                            = 4
 };
 
+
+
 @interface EQPlayer : NSObject
 {
 
@@ -43,7 +52,7 @@ enum {
     // number of frequencys
     NSMutableArray *eqFrequencies;                              // frequency bands for equalizer
     NSURL *audioFile;                                           // audio file URL
-    float songTime;
+    float songTime;                                             // current time
     
     
     Float64 graphSampleRate;                                    // audio graph sample rate
@@ -70,7 +79,7 @@ enum {
     AUNode      mixerNode;          // node for Multichannel Mixer unit
     AUNode      auEffectNode;       // master mix effect node
 
-    
+
 }
 
 // configuration methods for the audio graph & unit
@@ -85,11 +94,10 @@ enum {
 - (void) stopAUGraph;
 
 // public method
-- (void)setTime:(float)songTime;
+- (void)setTime:(float)Time;
 - (void)setEQ:(int)frequencyTag gain:(float)gainValue;
 - (NSArray *)getFrequencyBand;
-- (float)getCurrentTime;
-- (float)getDuration;
+
 
 
 
@@ -98,15 +106,15 @@ enum {
 @property (getter = isPlaying)  BOOL                        playing;
 @property                       BOOL                        interruptedDuringPlayback;
 @property (readonly,nonatomic,getter = isLoading)  BOOL     loading;
-@property (readonly,nonatomic, getter = getSongInfo )  NSArray *songInfo;
-@property (readwrite,nonatomic, setter = setMediaItem: ) MPMediaItem *mediaItem;
+@property (readonly,nonatomic) float duration;
+@property (readwrite,nonatomic, setter = setMediaItem: , getter = getSongInfo) MPMediaItem *mediaItem;
 
 @property (readwrite) AudioStreamBasicDescription stereoStreamFormat;
 @property (readwrite) AudioStreamBasicDescription auEffectStreamFormat;
 @property (readonly,nonatomic) soundStruct *audioStruct;
 
 
-
+@property (assign) id <EQPlayerDelegate> delegate;
 
 
 

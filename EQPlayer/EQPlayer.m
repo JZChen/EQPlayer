@@ -10,10 +10,12 @@
 
 @implementation EQPlayer
 
-@synthesize graphSampleRate , displayNumberOfInputChannels , auEffectStreamFormat , interruptedDuringPlayback , playing ,stereoStreamFormat , loading = _loading;
+// delegate for this class
+@synthesize delegate = _delegate;
 
+@synthesize graphSampleRate , displayNumberOfInputChannels , auEffectStreamFormat , interruptedDuringPlayback , playing ,stereoStreamFormat , loading = _loading , duration = _duration;
 
-@synthesize songInfo = _songInfo , mediaItem = _mediaItem , audioStruct = _audioStruct ;
+@synthesize mediaItem = _mediaItem , audioStruct = _audioStruct ;
 
 static OSStatus inputRenderCallback (void *inRefCon, AudioUnitRenderActionFlags  *ioActionFlags, const AudioTimeStamp *inTimeStamp,  UInt32  inBusNumber,   UInt32  inNumberFrames,  AudioBufferList *ioData );
 
@@ -57,7 +59,8 @@ static OSStatus inputRenderCallback (
                                      AudioBufferList             *ioData         // On output, the audio data to play. The callback's primary
                                      //        responsibility is to fill the buffer(s) in the
                                      //        AudioBufferList.
-                                     ) {
+                                     )
+{
     
     EQPlayer *player = (__bridge EQPlayer*) inRefCon;
     soundStructPtr    soundStructPointerArray   = player.audioStruct;
@@ -65,8 +68,6 @@ static OSStatus inputRenderCallback (
     BOOL              isStereo                  = soundStructPointerArray->isStereo;
     
 
-    // check if the file is loading into memory.
-    if (player.isLoading) return noErr;
                                          
     // Declare variables to point to the audio buffers. Their data type must match the buffer data type.
     AudioUnitSampleType *dataInLeft;
@@ -89,28 +90,48 @@ static OSStatus inputRenderCallback (
     // Get the sample number, as an index into the sound stored in memory,
     //    to start reading data from.
     UInt32 sampleNumber = soundStructPointerArray->sampleNumber;
-    printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
 
-   
+    
+    
+    
+    printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
     if (sampleNumber == 0 ) {
-        sampleNumber = frameTotalForSound / 4 * 3;
+        //sampleNumber = frameTotalForSound / 10 * 9;
         //printf("go back to frame 0\n");
     }
+
+
                                          
+    // check if the file is loading into memory.
+    // if it's loding, assign zero to frame and return
+    if (player.isLoading){
+        sampleNumber = 0;
+        for (UInt32 frameNumber = 0 ; frameNumber < inNumberFrames ; ++frameNumber , sampleNumber++){
+            outSamplesChannelLeft[frameNumber]                 = 0;
+            if (isStereo) outSamplesChannelRight[frameNumber]  = 0;
+            
+        }
+        return noErr;
+    }
+                                         
+
+    
+    // update current song time, send time to delegate
+    if( player.delegate != nil && [player.delegate conformsToProtocol:@protocol(EQPlayerDelegate)]){
+
+        if ( [player.delegate respondsToSelector:@selector(updateCurrentTime:)] ){
+            float currentTime = ( (float)sampleNumber/frameTotalForSound ) * player.duration;
+            [player.delegate updateCurrentTime:currentTime];
+        }
+    
+    }
+    
 
 
     // Fill the buffer or buffers pointed at by *ioData with the requested number of samples
     //    of audio from the sound stored in memory.
     for (UInt32 frameNumber = 0 ; frameNumber < inNumberFrames ; ++frameNumber , sampleNumber++) {
-        
-        
-        
-        outSamplesChannelLeft[frameNumber]                 = dataInLeft[sampleNumber];
-        if (isStereo) outSamplesChannelRight[frameNumber]  = dataInRight[sampleNumber];
-        
-        //outSamplesChannelLeft[frameNumber]                 = 0;
-        //if (isStereo) outSamplesChannelRight[frameNumber]  = 0;
-        
+
         
         // After reaching the end of the sound stored in memory--that is, after
         //    (frameTotalForSound / inNumberFrames) invocations of this callback--loop back to the
@@ -119,11 +140,18 @@ static OSStatus inputRenderCallback (
             sampleNumber = 0;
             //printf("go back to frame 0\n");
         }
+        
+        outSamplesChannelLeft[frameNumber]                 = dataInLeft[sampleNumber];
+        if (isStereo) outSamplesChannelRight[frameNumber]  = dataInRight[sampleNumber];
+        
+        
+
     }
     
     // Update the stored sample number so, the next time this callback is invoked, playback resumes 
     //    at the correct spot.
     soundStructPointerArray->sampleNumber = sampleNumber;
+
 
     
     return noErr;
@@ -944,6 +972,8 @@ static OSStatus inputRenderCallback (
     propertySize = sizeof(AudioStreamBasicDescription);
     ExtAudioFileGetProperty(audioFileObject, kExtAudioFileProperty_FileDataFormat, &propertySize, &fileStreamFormat);
     
+    _duration = (float)framesInThisFile/(float)fileStreamFormat.mSampleRate;
+    
     NSLog(@"Duration %f, total frame %d",(float)framesInThisFile/(float)fileStreamFormat.mSampleRate,framesInThisFile);
     NSLog(@"SampleRate %f",(float)fileStreamFormat.mSampleRate);
     
@@ -1164,8 +1194,6 @@ static OSStatus inputRenderCallback (
     AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset: songAsset presetName: AVAssetExportPresetPassthrough];
     exporter.outputFileType = @"com.apple.coreaudio-format";
     
-    
-    
     NSString *fname = [[NSString stringWithFormat:@"file"] stringByAppendingString:@".caf"];
     NSString *exportFile = [tempPath stringByAppendingPathComponent:fname];
     
@@ -1193,15 +1221,18 @@ static OSStatus inputRenderCallback (
 
 }
 
-- (NSArray *)getSongInfo
+- (void)setTime:(float)Time
 {
-    NSLog(@"under construction");
-    exit(1);
-}
+    // if graph is loading new song, just ignore the request
+    if (loading) return;
+    
+    // set time for the song 
+    if ( Time >= 0 || Time < _duration) {
+        UInt64 frameTotalForSound = _audioStruct->frameCount;
+        _audioStruct->sampleNumber = frameTotalForSound * ( Time / _duration );
+    }
 
-- (void)setTime:(float)songTime
-{
-
+//    _audioStruct->sampleNumber
 }
 
 - (void)setEQ:(int)frequencyTag gain:(float)gainValue
@@ -1228,6 +1259,8 @@ static OSStatus inputRenderCallback (
 {
     return songTime;
 }
+
+/*
 - (float)getDuration
 {
     
@@ -1258,7 +1291,7 @@ static OSStatus inputRenderCallback (
 
 }
 
-
+*/
 
 #pragma DEBUGTOOL
 

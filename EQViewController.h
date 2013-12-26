@@ -8,15 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import "EQPlayer.h"
+#import "EQDB.h"
 
-@interface EQViewController : UIViewController
+@interface EQViewController : UIViewController<EQPlayerDelegate,UITextFieldDelegate>
 {
     IBOutlet UILabel *songName,*songTime;
     IBOutlet UISlider *songProgress;
-    IBOutlet UIScrollView *info,*eqbars;
+    IBOutlet UIScrollView *eqbars;
+    IBOutlet UITextView *info;
+    IBOutlet UITextField *songType;
 
     EQPlayer *player;
-
+    EQDB *db;
     NSArray *frequency;
     NSMutableArray *sliders;
     NSMutableArray *labels;
@@ -25,9 +28,15 @@
 
 - (id)initWithPlayer:(EQPlayer *)eqplayer;
 
+- (IBAction)done:(id)sender;
+- (IBAction)reset:(id)sender;
+- (IBAction)restore:(id)sender;
+- (IBAction)save:(id)sender;
+- (IBAction)setTime:(UISlider *)sender;
+- (void)setEQValue:(UISlider *)sender;
 
--(IBAction)done:(id)sender;
--(IBAction)reset:(id)sender;
--(void)setEQValue:(UISlider *)sender;
+
+// delegate
+- (void)updateCurrentTime:(float)time;
 
 @end

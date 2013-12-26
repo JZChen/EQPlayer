@@ -60,7 +60,6 @@
         EQViewController *eqview = [[EQViewController alloc] initWithPlayer:player];
         [player setMediaItem:[[mediaItemCollection items] objectAtIndex:0]];
         [self presentViewController:eqview animated:YES completion:nil];
-
     }];
     
 }
