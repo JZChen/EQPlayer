@@ -94,7 +94,7 @@ static OSStatus inputRenderCallback (
     
     
     
-    printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
+    //printf("busnumber %i sampleNumber %i inNumberFrames %i frameTotal %i\n",inBusNumber,sampleNumber,inNumberFrames,frameTotalForSound);
     if (sampleNumber == 0 ) {
         //sampleNumber = frameTotalForSound / 10 * 9;
         //printf("go back to frame 0\n");

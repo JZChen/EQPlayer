@@ -24,6 +24,7 @@
 
 - (void)saveSet:(NSString *)song_id:(NSString *)song_name:(NSString *)song_type:(NSString *)eqSet;
 - (NSDictionary*)retrieveSet:(NSString *)song_id;
+- (Boolean)removeSet:(NSString *)song_id;
 - (NSArray *)retrieveAllSet;
 
 @end

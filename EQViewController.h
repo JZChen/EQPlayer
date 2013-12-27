@@ -28,6 +28,7 @@
 
 - (id)initWithPlayer:(EQPlayer *)eqplayer;
 
+
 - (IBAction)done:(id)sender;
 - (IBAction)reset:(id)sender;
 - (IBAction)restore:(id)sender;

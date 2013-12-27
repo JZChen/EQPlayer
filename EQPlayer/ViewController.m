@@ -24,6 +24,8 @@
     [self becomeFirstResponder];
     
     player = [[EQPlayer alloc] init];
+    db = [[EQDB alloc] init];
+
     //[player startAUGraph];
     
 
@@ -80,5 +82,102 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    content = [NSMutableArray arrayWithArray:[db retrieveAllSet]];
+    [tableview reloadData];
+}
+
+#pragma mark Table view methods________________________
+
+// To learn about using table views, see the TableViewSuite sample code
+//		and Table View Programming Guide for iPhone OS.
+
+- (NSInteger) tableView: (UITableView *) table numberOfRowsInSection: (NSInteger)section {
+    
+    return [content count];
+}
+
+- (UITableViewCell *) tableView: (UITableView *) tableView cellForRowAtIndexPath: (NSIndexPath *) indexPath {
+    
+	NSInteger row = [indexPath row];
+	
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"media"];
+    
+    if( cell == nil ){
+		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"media"];
+        
+    }
+    
+    NSDictionary *dic = [content objectAtIndex:row];
+	
+	if (dic) {
+		cell.textLabel.text = [dic objectForKey:@"songname"];
+        cell.detailTextLabel.text = [dic objectForKey:@"songtype"];
+	}
+    
+	[tableView deselectRowAtIndexPath: indexPath animated: YES];
+	
+	return cell;
+}
+
+//	 To conform to the Human Interface Guidelines, selections should not be persistent --
+//	 deselect the row after it has been selected.
+- (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
+	[tableView deselectRowAtIndexPath: indexPath animated: YES];
+    
+    NSDictionary *dic = [content objectAtIndex:[indexPath row]];
+    NSString *sid = [dic objectForKey:@"songid"];
+    
+    MPMediaQuery *query = [MPMediaQuery songsQuery];
+    
+    //int64_t i = atoll([sid UTF8String]);
+
+    
+    MPMediaPropertyPredicate *predicate = [MPMediaPropertyPredicate predicateWithValue:sid forProperty:MPMediaItemPropertyPersistentID];
+    [query addFilterPredicate:predicate];
+    
+    MPMediaItem *itemToPass;
+    for (MPMediaItem *item in [query items]) {
+        NSLog(@"%@",[item valueForProperty:MPMediaItemPropertyTitle]);
+        itemToPass = item;
+    }
+    
+    
+
+    EQViewController *eqView = [[EQViewController alloc] initWithPlayer:player];
+    [player setMediaItem:itemToPass];
+    [player startAUGraph];
+    [self presentViewController:eqView animated:YES completion:nil];
+    
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        
+        NSDictionary *dic = [content objectAtIndex:[indexPath row]];
+        NSString *sid = [dic objectForKey:@"songid"];
+        
+        // if the deletion in db works, perform deletion on UI
+        if ( [db removeSet:sid]) {
+            [content removeObjectAtIndex:[indexPath row]];
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+        }
+        
+        
+    }
+
+
+}
+
+
 
 @end

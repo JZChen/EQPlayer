@@ -126,6 +126,33 @@
 
 }
 
+
+- (Boolean)removeSet:(NSString *)song_id
+{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EQSet"
+                                              inManagedObjectContext:context];
+    [request setEntity:entity];
+    NSError *error;
+    NSArray *objects = [self.managedObjectContext executeFetchRequest:request
+                                                                error:&error];
+    
+    NSLog(@"%d matches found",[objects count]);
+    for(NSManagedObject *matches in objects)
+    {
+        if( [song_id isEqualToString:[matches valueForKey:@"songid"]] )
+        {
+            NSLog(@"Got it, perform delete");
+            [_managedObjectContext deleteObject:matches];
+            [_managedObjectContext save:&error];
+            return true;
+        }
+        
+    }
+    return false;
+}
+
 - (NSDictionary*)retrieveSet:(NSString *)song_id
 {
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
